@@ -1,12 +1,14 @@
 # Penjelasan Checklist
-
+link: https://tugas02.adaptable.app/main
 
 #### Membuat sebuah projek django baru
 * Sebelum membuat projek Django, saya membuat repositori terlebih dahulu. Saya sudah punya akun github, maka dari itu, saya langsung membuat repositori di situs github dengan nama tugas2 dan mengatur visibilitas proyek menjadi "Public".
 * Setelah itu, saya membuat direktori lokal dan menginisiasinya dengan mengetik `git init` di command prompter.
 * Selanjutnya, repositori direktori lokal perlu dihubungkan dengan repositori di Github. Maka dari itu, saya menjalankan terminal atau command prompt di direktori kemudian menjalankan perintah `git branch -M main` di mana saya membuat branch utama baru dengan nama "main". Untuk menghubungkan dengan repositori di Github, saya meng-copy URL repositori saya lalu menjalankan perintah `git remote add origin https://github.com/EllishaNatasha/tugas2.git`. Perintah ini bertujuan untuk memberitahu Git agar menambahkan remote repository dengan nama "origin" ke repositori lokal.
 * Selanjutnya, saya membuat virtual environment dengan menjalankan perintah `python -m venv env`. Perintah ini berfungsi untuk menghindari 'tabrakan' antara package dan dependencies dari aplikasi yang baru dibuat dengan versi lain aplikasi yang ada di komputer. Untuk mengaktifkannya, saya menjalankan perintah `env\Scripts\activate.bat`
+* Lalu, saya membuat berkas requirements.txt dan menambahkan dependencies. Dependencies tersebut perlu dipasang dengan perintah `pip install -r requirements.txt` 
 * Setelah melakukan proses-proses di atas, barulah saya membuat projek Django dengan menjalankan perintah "django-admin startproject tugas2"
+* Kemudian, saya menambahkan berkas .gitignore agar ketika push ke github, file-file yang dipush hanya file-file yang diperlukan. 
 
 #### Membuat aplikasi dengan nama main
 
@@ -44,10 +46,10 @@
     ```
     <h1>Tugas 2</h1>
 
-    <h5>Name: </h5>
-    <p>Ellisha Natasha</p> <!-- Ubahlah sesuai dengan nama kamu -->
-    <h5>Class: </h5>
-    <p>PBP D</p> <!-- Ubahlah sesuai dengan kelas kamu -->
+    <p>Name: Ellisha Natasha</p> 
+    <p>Class: PBP D</p> 
+    <p>Description: Glasses</p>
+    <p>Amount : 50</p>
     ```
 * Setelah itu, view harus dihubungkan dengan template agar tampilan web dapat menampilkan data dari model. Pertama, saya menambahkan baris kode `from django.shortcuts import render` pada berkas views.py untuk mengimpor fungsi render dari modul django.shortcuts. Render akan digunakan untuk merender tampilan HTML.
 * Kemudian, saya menambahkan fungsi show_main dengan kode sebagai berikut
@@ -55,7 +57,9 @@
     def show_main(request):
         context = {
             'name': 'Ellisha Natasha',
-            'class': 'PBP D'
+            'class': 'PBP D',
+            'description': 'Glasses',
+            'amount': '50',
         }
 
         return render(request, "main.html", context)
@@ -63,10 +67,10 @@
     Fungsi ini untuk mengolah permintaan dan memberikan hasil tampilan yang sesuai. Kode ini memiliki context yang berupa dictionary berisi data-data yang akan ditampilkan.
 * Untuk menampilkan data yang diambil dari model, saya mengubah template main.html menjadi:
     ```
-    <h5>Name: </h5>
-    <p>{{ name }}<p>
-    <h5>Class: </h5>
-    <p>{{ class }}<p>
+    <p>Name: {{ name }}</p> 
+    <p>Class: {{ class }}</p> 
+    <p>Description: {{ description }}</p>
+    <p>Amount : {{ amount }}</p>
     ```
     {{ name }} dan {{ class }} berisi nilai dari variabel yang sudah dibuat pada context.
     
@@ -89,7 +93,14 @@
     - path('', show_main, name='show_main' adalah pola URL. Pola "" artinya akan cocok dengan URL root dan ketika cocok, tampilan show_main akan dipanggil.
 
 #### Melakukan deployment ke Adaptable
-
+* Login ke situs adaptable lalu buat aplikasi baru dan pilih connect an existing repository.
+* Kemudian, pilih all repositories pada saat proses instalasi
+* Pilih repo dan branch sesuai proyek
+* Pilih Python App Template
+* Pilih PostgreSQL
+* Saya pilih python veri 3.10  lalu masukkan perintah `python manage.py migrate && gunicorn tugas2.wsgi.` pada start command
+* Kemudian, saya memasukkan nama aplikasi yaitu tugas02
+* Centang bagian HTTP Listener on Port dan mulai mendeploy aplikasi
 
 
 
@@ -132,3 +143,4 @@ Konsep MVVM terdiri dari tiga komponen, yaitu Model, View, dan ViewModel.
 -Model memiliki kode untuk pengoperasian logika serta menghubungkan request dari ViewModel ke sumber data lokal sekaligus remote
 -View merupakan tampilan yang terhubung dengan user.
 -ViewModel merupakan komponen yang memroses user interface.
+
