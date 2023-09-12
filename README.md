@@ -109,7 +109,7 @@ link: https://tugas02.adaptable.app/main
 ---
 
 # Bagan Request Client Beserta Responnya
-<img src="bagan.png" width = 500 height = 500>
+<img src="bagan.png" width = 800 height = 400>
 
 ##### Penjelasan kaitan antara urls.py, views.py, dan berkas html:
 - HTTP request merupakan request dari client pada web browser.
