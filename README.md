@@ -109,7 +109,7 @@ link: https://tugas02.adaptable.app/main
 ---
 
 # Bagan Request Client Beserta Responnya
-![](https://hackmd.io/_uploads/rJQVo5pCh.png)
+<img src="bagan.png">
 
 ##### Penjelasan kaitan antara urls.py, views.py, dan berkas html:
 - HTTP request merupakan request dari client pada web browser.
