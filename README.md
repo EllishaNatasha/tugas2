@@ -144,3 +144,289 @@ Konsep MVVM terdiri dari tiga komponen, yaitu Model, View, dan ViewModel.
 -View merupakan tampilan yang terhubung dengan user.
 -ViewModel merupakan komponen yang memroses user interface.
 
+
+---
+
+
+---
+# Perbedaan Antara Form Post dan Form Get
+* Form post mengirimkan nilai atau data ke action untuk ditampung tanpa menampilkannya di URL sehingga data-data yang ditampung akan lebih aman. Data yang dikirim tidak terbatas.
+* Form get mengambil dan menampilkan nilai atau data pada URL sehingga user dapat dengan mudah menambahkan data baru. Lalu, data tersebut dikirim ke action untuk kemudian ditampung. Data pada method get tidak boleh lebih dari 2047 karakter.
+
+
+---
+
+# Perbedaan Utama Antara XML, JSON, dan HTML
+* XML menyimpan data dalam struktur tree dan menggunakan sintaksis berupa tag. Biasanya XML digunakan untuk pertukaran data antar aplikasi yang berbeda.
+* JSON menyajikan datanya dengan menggunakan pasangan key-value pada strukturnya. JSON menggunakan format dan sintaksis yang mudah dibaca oleh manusia. Biasanya digunakan untuk pertukaran data antara server dan klien web
+* HTML merupakan bahasa markup yang digunakan untuk menentukan tampilan web. HTML menggunakan tag dengan definisi tertentu. Biasanya digunakan untuk menampilkan data dan mudah dibaca manusia.
+
+
+---
+# Mengapa JSON Sering Digunakan dalam Pertukaran Data Antara Aplikasi Web Modern?
+Hal ini karena JSON menggunakan format pertukaran data yang ringan serta mudah dibaca dan dipahami oleh manusia. Sintaksnya juga lebih ringan dan ukurannya kecil. Metode key-value yang ada pada JSON juga efisien dan sangat kompatibel dengan berbagai bahasa pemrograman sehingga memungkinkan pengembang untuk bekerja pada struktur data dengan lancar. JSON efisien dalam melakukan transmisi data melalui jaringan dan jejak datanya lebih kecil jika dibandingkan dengan XML. Tak hanya itu, kemampuannya dalam melakukan pembaruan aplikasi tanpa hambatan memungkinkan pengembang untuk memperbarui model data maupun logika dengan mudah dan cepat.
+
+
+
+---
+
+# Implementasi Checklist
+#### Membuat input form untuk menambahkan objek model pada app sebelumnya
+* Pertama, kita perlu membuat skeleton sebagai kerangka views dari situs web kita. Saya membuat folder bernama templates pada root folder yang berisi berkas HTML bernama base.html di mana berkas ini merupakan template dasar sebagai kerangka umum untuk halaman web lainnya.
+* Isi berkas tersebut dengan kode
+    ```
+    {% load static %}
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8" />
+            <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1.0"
+            />
+            {% block meta %}
+            {% endblock meta %}
+        </head>
+
+        <body>
+            {% block content %}
+            {% endblock content %}
+        </body>
+    </html>
+    ```
+* Kemudian, kita perlu membuat agar berkas base.html terdeteksi sebagai berkas template. Caranya adalah dengan membuka settings.py kemudian ubah menjadi potongan kode berikut:
+    ```
+    ...
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [BASE_DIR / 'templates'], # Tambahkan kode ini
+            'APP_DIRS': True,
+            ...
+        }
+    ]
+    ...
+    ```
+* Selanjutnya, kita perlu menggunakan base.html sebagai template utama, maka pada subdirektori templates yang ada di direktori main, ubah kode berkas main.html menjadi kode berikut:
+    ```
+    {% extends 'base.html' %}
+
+    {% block content %}
+        <h1>Tugas 3</h1>
+
+        <h5>Name:</h5>
+        <p>{{name}}</p>
+
+        <h5>Class:</h5>
+        <p>{{class}}</p>
+    {% endblock content %}
+    ```
+* Untuk membuat form input data, saya membuat berkas baru pada direktori main dengan nama forms.py dan menambahkan kode berikut agar dapat menerima data produk baru.
+    ```
+    from django.forms import ModelForm
+    from main.models import Item
+
+    class ProductForm(ModelForm):
+        class Meta:
+            model = Item
+            fields = ["name", "amount", "description"]
+    ```
+    Kode model = Item bertujuan agar ketika data dari form disimpan, isinya akan disimpan sebagai objek Item
+* Selanjutnya, tambahkan import pada berkas views.py yang ada di folder main. 
+    ```
+    from django.http import HttpResponseRedirect
+    from main.forms import ProductForm
+    from django.urls import reverse
+    ```
+* Kemudian, saya buat fungsi baru bernama create_product yang menerima parameter request dan berisi potongan kode berikut
+    ```
+    def create_product(request):
+        form = ProductForm(request.POST or None)
+
+        if form.is_valid() and request.method == "POST":
+            form.save()
+            return HttpResponseRedirect(reverse('main:show_main'))
+
+        context = {'form': form}
+        return render(request, "create_product.html", context)
+    ```
+    Kode tersebut ditambahkan untuk menghasilkan form yang dapat menambahkan data secara otomatis ketika di-submit.
+* Kemudian, ubah fungsi show_main pada berkas views.py menjadi:
+    ```
+    def show_main(request):
+        items = Item.objects.all()
+
+        context = {
+            'name': 'Ellisha Natasha', 
+            'class': 'PBP D', 
+            'items': items
+        }
+
+        return render(request, "main.html", context)
+    ```
+    Fungsi Item.objects.all() berguna untuk mengambil seluruh object Item yang tersimpan.
+* Selanjutnya, buka urls.py pada folder main dan import fungsi create_product
+* Untuk mengakses fungsi yang sudah diimport sebelumnya, tambahkan path url ke dalam urlpatterns yang ada pada urls.py folder main.
+* Kemudian, buat berkas HTML baru dengan nama create_product.html pada direktori main/templates dan mengisi berkas tersebut dengan kode berikut.
+    ```
+    {% extends 'base.html' %} 
+
+    {% block content %}
+    <h1>Add New Item</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Add Item"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    {% endblock %}
+    ```
+    Penjelasan kode di atas:
+    - Kode <form method = "POST"> berfungsi untuk menandakan blok pada form dengan metode POST.
+    - Kode {% csrf_token %} merupakan token untuk security. Token ini digenerate secara otomatis oleh Django.
+    - Kode {{ form.as_table }} berfungsi untuk menampilkan fields pada form yang berupa table pada forms.py
+    - Kode <input type ="submit" value="Add Product"/> berguna sebagai tombol submit lalu mengirimkan request ke view.
+* Lalu, saya membuat berkas show_html.html pada folder templates dan menambahkan kode berikut  yang bertujuan untuk menampilkan data produk dalam bentuk table
+    ```
+    <p>you have {{items|length}} items</p>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Date Added</th>
+        </tr>
+
+
+        {% for item in items %}
+            <tr>
+                <td>{{item.name}}</td>
+                <td>{{item.amount}}</td>
+                <td>{{item.description}}</td>
+                <td>{{item.date_added}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    ```
+* Terakhir, saya menambahkan kode berikut pada berkas main.html untuk menambahkan button.
+    ```
+    <br />
+
+        <a href="{% url 'main:create_product' %}">
+            <button>
+                Add New Item
+            </button>
+        </a>
+    ```
+
+#### Tambahkan 5 fungsi views untuk melihat objek yang sudah ditambahkan dalam format HTML, XML, JSON, XML by ID, dan JSON by ID.
+* HTML
+    - Sebelumnya, kita perlu mengimport HttpResponse dan Serializer terlebih dahulu pada berkas views.py
+        ```
+        from django.http import HttpResponse
+        from django.core import serializers
+        ```
+    - Kemudian, buat fungsi yang menerima parameter request serta tambahkan return function berupa Render.
+        ```
+        def show_html(request):
+            data = Item.objects.all()
+            return render(request, 'show_html.html', {"items" : data})
+        ```
+* XML
+    - Pada berkas views.py yang ada di folder main, saya membuat fungsi yang menerima parameter request dengan return function berupa HTTPResponse yang sudah diserialisasi menjadi XML dan parameter yaitu content_type="application/xml".
+        ```
+        def show_xml(request):
+            data = Item.objects.all()
+            return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+        ```
+        Serializer berguna untuk mentranslasikan objek model menjadi format lain.
+* JSON
+    - Pada berkas views.py yang ada di folder main, saya membuat fungsi yang menerima parameter request dengan return function berupa HTTPResponse yang sudah diserialisasi menjadi JSON dan parameter yaitu content_type="application/json".
+        ```
+        def show_json(request):
+            data = Item.objects.all()
+            return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+        ```
+* XML by ID
+    - Pada berkas views.py yang ada di folder main, saya membuat fungsi yang menerima parameter request dan id dengan return function berupa HTTPResponse yang sudah diserialisasi menjadi XML dan parameter yaitu content_type="application/xml".
+    - Pada fungsi tersebut, saya menambahkan variabel bernama data yang menyimpan hasil query dengan id tertentu.
+        ```
+        def show_xml_by_id(request, id):
+            data = Item.objects.filter(pk=id)
+            return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+        ```
+* JSON by ID
+    - Pada berkas views.py yang ada di folder main, saya membuat fungsi yang menerima parameter request dan id dengan return function berupa HTTPResponse yang sudah diserialisasi menjadi JSON dan parameter yaitu content_type="application/json".
+    - Pada fungsi tersebut, saya menambahkan variabel bernama data yang menyimpan hasil query dengan id tertentu.
+        ```
+        def show_json_by_id(request, id):
+            data = Item.objects.filter(pk=id)
+            return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+        ```
+
+#### Membuat routing URL untuk masing-masing views yang telah ditambahkan.
+* HTML
+    - Pertama, saya mengimpor fungsi show_html pada berkas urls.py yang ada di folder main
+    - Kemudian, saya menambahkan path url ke dalam urlpatterns.
+        ```
+        path('html/', show_html, name= 'show_html'),
+        ```
+* XML
+    -  Pertama, saya mengimpor fungsi show_xml pada berkas urls.py yang ada di folder main
+    - Kemudian, saya menambahkan path url ke dalam urlpatterns.
+        ```
+        path('xml/', show_xml, name='show_xml'), 
+        ```
+* JSON
+    - Pertama, saya mengimpor fungsi show_json pada berkas urls.py yang ada di folder main
+    - Kemudian, saya menambahkan path url ke dalam urlpatterns.
+        ```
+        path('json/', show_json, name='show_json'), 
+        ```
+* XML by ID
+    - Pertama, saya mengimpor fungsi show_xml_by_id pada berkas urls.py yang ada di folder main
+    - Kemudian, saya menambahkan path url ke dalam urlpatterns.
+        ```
+        path('xml/<int:id>/', show_xml_by_id, name='show_xml_by_id'),
+        ```
+* JSON by ID
+    - Pertama, saya mengimpor fungsi show_json_by_id pada berkas urls.py yang ada di folder main
+    - Kemudian, saya menambahkan path url ke dalam urlpatterns.
+        ```
+        path('json/<int:id>/', show_json_by_id, name='show_json_by_id'),
+        ```
+
+
+
+---
+
+# Screenshot Hasil Mengakses Kelima URL Menggunakan Postman 
+#### HTML
+<img src="ss_html_1.png" width = 500 height = 200>
+<img src="ss_html_2.png" width = 500 height = 200>
+
+#### XML
+<img src="ss_xml_1.png" width = 500 height = 200>
+<img src="ss_xml_2.png" width = 500 height = 200>
+
+#### JSON
+<img src="ss_json_1.png" width = 500 height = 200>
+<img src="ss_json_2.png" width = 500 height = 200>
+    
+#### XML by ID
+<img src="ss_xml_id_1.png" width = 500 height = 200>
+<img src="ss_xml_id_2.png" width = 500 height = 200>
+<img src="ss_xml_id_3.png" width = 500 height = 200>
+    
+#### JSON by ID
+<img src="ss_json_id_1.png" width = 500 height = 200>
+<img src="ss_json_id_2.png" width = 500 height = 200>
+<img src="ss_json_id_3.png" width = 500 height = 200>

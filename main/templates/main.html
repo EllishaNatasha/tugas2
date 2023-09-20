@@ -1,6 +1,21 @@
-<h1>Tugas 2</h1>
+{% extends 'base.html' %}
 
-<p>Name: {{ name }}</p> <!-- Ubahlah sesuai dengan nama kamu -->
-<p>Class: {{ class }}</p> <!-- Ubahlah sesuai dengan kelas kamu -->
-<p>Description: {{ description }}</p>
-<p>Amount : {{ amount }}</p>
+{% block content %}
+    <h1>Tugas 3</h1>
+
+    <h5>Name:</h5>
+    <p>{{name}}</p>
+
+    <h5>Class:</h5>
+    <p>{{class}}</p>
+
+
+    <br />
+
+    <a href="{% url 'main:create_product' %}">
+        <button>
+            Add New Item
+        </button>
+    </a>
+    
+{% endblock content %}
