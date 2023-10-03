@@ -1,45 +1,63 @@
 {% extends 'base.html' %}
+{% load static %}
+
 
 {% block meta %}
     <title>Login</title>
 {% endblock meta %}
 
+
 {% block content %}
 
-<div class = "login">
-
-    <h1>Login</h1>
-
-    <form method="POST" action="">
-        {% csrf_token %}
-        <table>
-            <tr>
-                <td>Username: </td>
-                <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
-            </tr>
+<div class="container d-flex justify-center" style="justify-content: center;">
+    <div class = "login d-flex flex-column justify-content-center align-items-center " style="background-color: rgb(255, 213, 221); height: 500px; width: 1000px;text-align: center;margin-top:30px;border-radius: 40px;">
+        <div class = "incontainer d-flex flex-column justify-content-center align-items-center" style="background-color: rgba(245, 245, 245, 0.628); height: 30px; width: 550px; border-radius: 40px">
+            
+            <div class = "text-center">
+                
+                <div>
                     
-            <tr>
-                <td>Password: </td>
-                <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
-            </tr>
+                    <h1 style="margin-bottom: 50px;">
+                        Login</h1>
+                
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <table>
+                        <tr>
+                            <td>Username: </td>
+                            <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
+                        </tr>
+                                
+                        <tr>
+                            <td>Password: </td>
+                            <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
+                        </tr>
+                
+                        <tr>
+                            <td></td>
+                            <td><input class="btn login_btn" type="submit" value="Login" style="background-color:rgb(234, 78, 185); margin-top: 30px; margin-bottom: 30px;"></td>
+                        </tr>
+                    </table>
+                </form>
+                
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}     
+                    
+                Don't have an account yet? <a href="{% url 'main:register' %}">Register Now</a>
+            </div>
+    </div>
+</div>
+</div>
+    
 
-            <tr>
-                <td></td>
-                <td><input class="btn login_btn" type="submit" value="Login"></td>
-            </tr>
-        </table>
-    </form>
 
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}     
-        
-    Don't have an account yet? <a href="{% url 'main:register' %}">Register Now</a>
-
+</div>
+</div>
 </div>
 
 {% endblock content %}
