@@ -1,19 +1,24 @@
 {% extends 'base.html' %} 
 
 {% block content %}
-<h1>Add New Item</h1>
+<div class="container d-flex justify-center" style="justify-content: center; margin-top: 40px; background-color: rgb(0, 95, 38);border-radius: 40px; width: 1050px;">
+    <h1 class="tulisan text-light text-center " style="justify-content: center; padding-top: 180px;" >Add New Item</h1>
+    <div class="container d-flex justify-center" style="background-color: rgb(254, 199, 192); height: 450px;width:850px; border-radius: 40px;padding-top: 50px;">
+        <form method="POST">
+            {% csrf_token %}
+            <table>
+                {{ form.as_table }}
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="Add Item"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    
+    </div>
+</div>
 
-<form method="POST">
-    {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-        <tr>
-            <td></td>
-            <td>
-                <input type="submit" value="Add Item"/>
-            </td>
-        </tr>
-    </table>
-</form>
 
 {% endblock %}

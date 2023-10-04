@@ -559,3 +559,55 @@ if form.is_valid() and request.method == "POST":
     ```
     <h5>Sesi terakhir login: {{ last_login }}</h5>
     ```
+
+---
+
+# TUGAS 5
+# Jelaskan manfaat dari setiap element selector dan kapan waktu yang tepat untuk menggunakannya
+Element selector berfungsi untuk mengubah properti untuk semua elemen yang memiliki tag HTML yang sama. Digunakan ketika ingin mengubah style suatu elemen seperti color, size, jenis font, dan sebagainya. 
+
+
+---
+
+    
+# Jelaskan HTML5 Tag yang Kamu Ketahui
+* `<!DOCTYPE>` : mendefinisikan jenis dokumen dan versi HTML
+* `<a>` : mendefinisikan hyperlink
+* `<body>` : tubuh dokumen
+* `<button>` : mendefinisikan tombol untuk diklik
+* `<div>` : mendefinisikan bagian dalam dokumen
+* `<img>` : mendefinisikan gambar
+* `<p>` : mendefinisikan paragraf
+* `<header>` : mendefinisikan header
+* `<h1>` : judul HTML
+
+
+---
+
+# Jelaskan Perbedaan Antara Margin dan Padding
+Margin digunakan untuk mengatur jarak antara elemen dengan elemen lainnya atau dengan tepi browser. Sedangkan padding digunakan untuk mengatur jarak atau menambahkan ruang kosong di sekitar elemen HTML. Jadi, penggunaan margin akan mempengaruhi tata letak keseluruhan website. Sementara itu, penggunaan padding hanya akan mempengaruhi elemen yang diberlakukan padding itu sendiri.
+
+
+---
+
+# Jelaskan Perbedaan Antara Framework CSS Tailwind dan Bootstrap. Kapan sebaiknya kita menggunakan Bootstrap daripada Tailwind, dan sebaliknya?
+Tailwind merupakan framework yang memiliki fleksibilitas tinggi kepada pengembang untuk merancang tampilan, sedangkan bootstrap lebih kaku dan desainnya lebih terstruktur. Penggunaan bootstrap lebih cocok daripada tailwind ketika pengembang ingin membangun proyek dengan waktu yang sikat. Sedangkan, penggunaan tailwind akan lebih baik jika pengembangan membutuhkan tingkat kustomisasi yang tinggi.
+    
+
+---
+# Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step.
+#### Kustomisasi halaman login, register, dan tambah inventori semenarik mungkin.
+* Pertama, saya menambahkan kode berikut pada base.html
+    ```
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    ```
+* Selanjutnya, saya mulai mendesain tampilan website menggunakan style dan mengubah color, bentuk container pada bootstrap dan kemudian mengatur ukuran pada setiap container dengan menggunakan margin dan padding.
+* Pada register, saya mengubah background color pada website dan mengubah tata letak tulisan
+* Pada halaman add item, saya membuat dua container berwarna hijau dan pink dan kemudian saya ubah tata letaknya sesuai yang saya inginkan menggunakan margin dan padding
+
+#### Kustomisasi halaman daftar inventori menjadi lebih berwarna maupun menggunakan approach lain seperti menggunakan Card.
+* Pada daftar inventori, saya menggunakan card untuk menampilkan item-item yang sudah pernah ditambahkan.
+* Pada card, saya menambahkan title untuk menampilkan nama item. serta text untuk descripti
