@@ -2,21 +2,92 @@
 {% block content %}
 <div class="container" style="background-color: pink; min-height: 100vh; min-width: 100vw;padding: 70px;">
 
-    <p class="title" style="font-size: x-large; font-weight: bold;margin-bottom: 30px;">You have {{ items|length }} items</p>
-
-    <div class="row">
-        {% for item in items %}
-        <div class="col-md-4 mb-3">
-            <div class="card {% if forloop.last %}bg-warning{% endif %}" style="border-radius: 10px;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ item.name }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Amount: {{ item.amount }}</h6>
-                    <p class="card-text">{{ item.description }}</p>
-                    <p class="card-text">Date Added: {{ item.date_added }}</p>
+    <div id="item_cards" class="row">
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Item</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="col-form-label">Name:</label>
+                            <input type="text" class="form-control" id="name" name="name"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="col-form-label">Amount:</label>
+                            <input type="number" class="form-control" id="amount" name="amount"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="col-form-label">Description:</label>
+                            <textarea class="form-control" id="description" name="description"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Item</button>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Item</button>
+    
 </div>
+
+
+<script>
+    async function getItems() {
+        return fetch("{% url 'main:get_item_json' %}").then((res) => res.json())
+    }
+
+    async function refreshItems() {
+        document.getElementById("item_cards").innerHTML = ""
+        const items = await getItems()
+        let htmlString = ""
+        htmlString+=`\n<p class="title" style="font-size: x-large; font-weight: bold;margin-bottom: 30px;">You have ${items.length} items</p>`
+        
+        items.forEach((item) => {
+        htmlString += `\n <div class="col-md-4 mb-3">
+        <div class="card {% if forloop.last %}bg-warning{% endif %}" style="border-radius: 10px;">
+            <div class="card-body">
+                <div class="r1 " style="display: flex; justify-content: space-between; align-items: center;margin-bottom:10px;">
+                    <h1 class="card-title" style="font-size:30px;" >${item.fields.name}</h1>
+                    <button class="btn btn-danger" onClick="deleteItem(${item.pk})">Delete</button>
+                </div>
+                <h6 class="card-subtitle mb-2 text-muted">${item.fields.amount}</h6>
+                <p class="card-text">${item.fields.description}</p>
+                <p class="card-text">${item.fields.date_added}</p>
+
+        </div>
+        </div>
+        </div>`
+        
+        })
+        
+        document.getElementById("item_cards").innerHTML = htmlString
+    }
+
+    refreshItems()
+    function addItem() {
+        fetch("{% url 'main:add_item_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshItems)
+
+        document.getElementById("form").reset()
+        return false
+    }
+    document.getElementById("button_add").onclick = addItem
+
+    function deleteItem(id) {
+        fetch(`/delete_item/${id}/`, {
+            method: "POST",
+        }).then(refreshItems)
+    }
+</script>
 {% endblock %}

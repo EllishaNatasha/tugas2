@@ -611,3 +611,136 @@ Tailwind merupakan framework yang memiliki fleksibilitas tinggi kepada pengemban
 #### Kustomisasi halaman daftar inventori menjadi lebih berwarna maupun menggunakan approach lain seperti menggunakan Card.
 * Pada daftar inventori, saya menggunakan card untuk menampilkan item-item yang sudah pernah ditambahkan.
 * Pada card, saya menambahkan title untuk menampilkan nama item. serta text untuk descripti
+
+---
+
+# TUGAS 6
+# Jelaskan perbedaan antara asynchronous programming dengan synchronous programming.
+Perbedaannya terletak pada cara dan urutan eksekusi program. Synchronus programming akan menunggu tugas yang saat ini selesai untuk kemudian lanjut ke tugas selanjutnya, sedangkan asynchronus programming langsung menjalankan tugas secara independen tanpa harus menunggu tugas yang lain selesai. Hal ini karena asynchronus programming tidak terikat pada input output (I/O) protocol dan lebih independen daripada synchronus. Hal ini menyebabkan waktu eksekusi pada synchronus programming lebih lama daripada asynchronus programming.
+
+
+---
+
+    
+# Jelaskan maksud dari paradigma event-driven programming dan sebutkan salah satu contoh penerapannya pada tugas ini.
+* Paradigma event-driven programming adalah pendekatan pada programming yang merespons suatu event atau kejadian, seperti input user, sinyal, botton-click, dan sebagainya. Jadi, alur pengerjaannya tergantung dari kejadian atau event tertentu.
+* Salah satu contoh penerapannya pada tugas kali ini, yaitu tombol button add item. Ketika user meng-klik button tersebut, program yang dihubungkan dengan button tersebut akan dieksekusi.
+
+
+---
+
+# Jelaskan penerapan asynchronous programming pada AJAX.
+AJAX adalah Asynchronus Javascript and XML di mana penerapan ini memungkinkan aplikasi web bekerja secara asynchronus. Dalam pemrograman AJAX, pengguna melakukan permintaan ke server dan permintaan tersebut akan ditampung terlebih dahulu di mesin AJAX. Kemudian, proses akan dilakukan dengan metode asynchronus. Penerapan ini akan memungkinkan aplikasi web menjadi lebih responsif dan lebih cepat. Penerapannya adalah dengan menggunakan fetch() atau async/await.
+    
+---
+
+# Bandingkan Fetch API dengan library jQuery dan tuliskan pendapat kamu teknologi manakah yang lebih baik untuk digunakan.
+Fetch API merupakan teknologi yang lebih ringan karena kerjanya untuk mengambil data dari server dan sudah mendukung ES6. JQuery memiliki fungsi bawaan untuk memudahkan pemrosesan respons dan dapat menangani perbedaan antar browser. Untuk menentukan teknologi mana yang lebih baik, perlu diperhatikan kegunaan dan tujuan dari program yang dibuat. Namun, dilihat dari keringanan dan kemodernannya, fetch API lebih baik digunakan karena memiliki kelebihan yang lebih banyak.
+
+
+---
+
+# Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step
+#### Ubahlah kode cards data item agar dapat mendukung AJAX GET.
+Pada tugas sebelumnya, saya sudah mengubah data item menjadi bentuk cards dengan cara menentukan style dan ukuran cards terlebih dahulu. Setelah itu, saya melakukan looping untuk membuat cards sekaligus menambahkan data-data yang diperlukan. Kodenya adalah seperti berikut:
+```
+{% for item in items %}
+        <div class="col-md-4 mb-3">
+            <div class="card {% if forloop.last %}bg-warning{% endif %}" style="border-radius: 10px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Amount: {{ item.amount }}</h6>
+                    <p class="card-text">{{ item.description }}</p>
+                    <p class="card-text">Date Added: {{ item.date_added }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+```
+
+#### Lakukan pengambilan task menggunakan AJAX GET.
+* Pertama, saya membuat fungsi baru pada views.py bernama get_item_json yang menerima parameter request dan akan mereturn httpresponse 
+* Selanjutnya, fungsi tersebut saya tambahkan routing dengan cara mengimpor fungsi tersebut pada berkas urls.py dan menambahkan path url tersebut ke urlpatterns 
+    ```
+    path('get-item/', get_item_json, name='get_item_json'),
+    ```
+* Langkah selanjutnya adalah memodifikasi file show_html.html. Pada blok kode pembuatan cards yang telah saya buat di tugas sebelumnya, saya menambahkan kode ini dan mengosongkan isi dari div tersebut (sebelumnya blok kode untuk membuat cards):
+    ```
+        <div id="item_cards" class="row"> </div>
+    ```
+* Selanjutnya, saya membuat blok scripts dan membuat fungsi baru bernama getItems() yang akan menggunakan fetch() API ke data JSON secara asynchronus.
+    ```
+    async function getItems() {
+            return fetch("{% url 'main:get_item_json' %}").then((res) => res.json())
+        }
+    ```
+* Kemudian, saya membuat fungsi lagi dengan nama refreshItems() agar dapat me-refresh data secara asynchronus. Pada fungsi ini saya memindahkan blok kode card yang tadinya saya hapus menjadi kode seperti ini:
+    ```
+    async function refreshItems() {
+            document.getElementById("item_cards").innerHTML = ""
+            const items = await getItems()
+            let htmlString = ""
+            htmlString+=`\n<p class="title" style="font-size: x-large; font-weight: bold;margin-bottom: 30px;">You have ${items.length} items</p>`
+
+            items.forEach((item) => {
+            htmlString += `\n <div class="col-md-4 mb-3">
+            <div class="card {% if forloop.last %}bg-warning{% endif %}" style="border-radius: 10px;">
+                <div class="card-body">
+                    <div class="r1 " style="display: flex; justify-content: space-between; align-items: center;margin-bottom:10px;">
+                        <h1 class="card-title" style="font-size:30px;" >${item.fields.name}</h1>
+                        <button class="btn btn-danger" onClick="deleteItem(${item.pk})">Delete</button>
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">${item.fields.amount}</h6>
+                    <p class="card-text">${item.fields.description}</p>
+                    <p class="card-text">${item.fields.date_added}</p>
+
+            </div>
+            </div>
+            </div>`
+
+            })
+
+            document.getElementById("item_cards").innerHTML = htmlString
+        }
+    ```
+    
+#### Buatlah sebuah tombol yang membuka sebuah modal dengan form untuk menambahkan item.
+* Pertama, saya menambahkan kode untuk mengimplementasikan modal bootstrap
+* Selanjutnya, saya membuat button untuk menampilkan modal tersebut.
+    ```
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Item</button>
+    ```
+
+#### Buatlah fungsi view baru untuk menambahkan item baru ke dalam basis data.
+* Pertama, saya membuat function addItem() pada block Script
+    ```
+    function addItem() {
+            fetch("{% url 'main:add_item_ajax' %}", {
+                method: "POST",
+                body: new FormData(document.querySelector('#form'))
+            }).then(refreshItems)
+
+            document.getElementById("form").reset()
+            return false
+        }
+    ```
+* Kemudian, saya menambahkan kode berikut di bawah function yang sudah saya buat
+    ```
+    document.getElementById("button_add").onclick = addItem
+
+    ```
+
+#### Buatlah path /create-ajax/ yang mengarah ke fungsi view yang baru kamu buat.
+Untuk langkah ini, saya menambahkan kode berikut pada urls.py di urlpatterns:
+```
+path('create-item-ajax/', add_item_ajax, name='add_item_ajax'),
+```
+
+#### Hubungkan form yang telah kamu buat di dalam modal kamu ke path /create-ajax/
+Langkah ini sudah dilakukan ketika saya membuat function addItem dan menambahkan pathnya. 
+```
+path('create-item-ajax/', add_item_ajax, name='add_item_ajax'),
+```
+  
+#### Melakukan perintah collectstatic
+menjalankan perintah `python manage.py collectstatic`
